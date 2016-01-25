@@ -2,7 +2,6 @@ from grapheneapi import GrapheneClient
 from grapheneexchange import GrapheneExchange
 
 import json
-import fractions
 
 
 class Config():
@@ -32,16 +31,19 @@ if __name__ == '__main__':
         pass
 
     if not ticker or config.watch_markets[0] not in ticker:
-        price = 1
+        price = 1.0
     else :
         price = ticker[config.watch_markets[0]]["last"]
+        if price == -1:
+            price = 1.0
 
+    asset = graphene.rpc.get_asset(asset_symbol)
+    base = graphene.rpc.get_asset("1.3.0")
+    price = price * 10 ** asset["precision"] / 10 ** base["precision"]
+    denominator = base["precision"]
+    numerator   = round(price*base["precision"])
     for producer in producers:
         account = graphene.rpc.get_account(producer)
-        asset = graphene.rpc.get_asset(asset_symbol)
-        core_price  = fractions.Fraction.from_float(price).limit_denominator(1e5)
-        denominator = core_price.denominator
-        numerator   = core_price.numerator
         price_feed  = {"settlement_price": {
                        "quote": {"asset_id": "1.3.0",
                                  "amount": denominator

@@ -33,18 +33,21 @@ if __name__ == '__main__':
         pass
 
     if not ticker or config.watch_markets[0] not in ticker:
-        price = 100
+        price = 100 * asset["precision"]
     else :
         price = ticker[config.watch_markets[0]]["settlement_price"]
 
-    price += random.normalvariate(1, 1)
+    price += random.normalvariate(1, 0.1)
     price = math.fabs(price)
+
+    asset = graphene.rpc.get_asset(asset_symbol)
+    base = graphene.rpc.get_asset("1.3.0")
+    price = price * 10 ** asset["precision"] / 10 ** base["precision"]
+    denominator = 1e5
+    numerator   = round(price*1e5)
 
     for producer in producers:
         account = graphene.rpc.get_account(producer)
-        asset = graphene.rpc.get_asset(asset_symbol)
-        denominator = 1e5
-        numerator   = round(price*1e5)
         price_feed  = {"settlement_price": {
                        "quote": {"asset_id": "1.3.0",
                                  "amount": denominator

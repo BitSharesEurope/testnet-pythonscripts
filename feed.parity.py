@@ -19,12 +19,14 @@ if __name__ == '__main__':
 
     price = 1
 
+    asset = graphene.rpc.get_asset(asset_symbol)
+    base = graphene.rpc.get_asset("1.3.0")
+    price = price * 10 ** asset["precision"] / 10 ** base["precision"]
+    denominator = 1e5
+    numerator   = round(price*1e5)
+
     for producer in producers:
         account = graphene.rpc.get_account(producer)
-        asset = graphene.rpc.get_asset(asset_symbol)
-        core_price  = fractions.Fraction.from_float(price).limit_denominator(1e5)
-        denominator = core_price.denominator
-        numerator   = core_price.numerator
         price_feed  = {"settlement_price": {
                        "quote": {"asset_id": "1.3.0",
                                  "amount": denominator
