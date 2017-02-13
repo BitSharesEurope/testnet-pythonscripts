@@ -1,4 +1,4 @@
-from grapheneapi import GrapheneClient
+from grapheneapi.grapheneapi import GrapheneAPI
 import json
 
 perm = {}
@@ -15,23 +15,16 @@ GRAPHENE_100_PERCENT = 10000
 GRAPHENE_1_PERCENT = GRAPHENE_100_PERCENT / 100
 
 
-class Config():
-    wallet_host           = "localhost"
-    wallet_port           = 8090
-    wallet_user           = ""
-    wallet_password       = ""
-
-
 if __name__ == '__main__':
-    graphene = GrapheneClient(Config)
+    rpc = GrapheneAPI("localhost", 8092)
 
     issuer = "faucet"
-    symbol = "PEG.LAST" # RANDOM, PARITY, LAST
-    precision = 4
+    symbol = "CNY"
+    precision = 2
     backing = "1.3.0"
 
-    account = graphene.rpc.get_account(issuer)
-    asset = graphene.rpc.get_asset(backing)
+    account = rpc.get_account(issuer)
+    asset = rpc.get_asset(backing)
 
     permissions = {"charge_market_fee" : True,
                    "white_list" : True,
@@ -50,7 +43,7 @@ if __name__ == '__main__':
                    "disable_force_settle" : False,
                    "global_settle" : False,
                    "disable_confidential" : False,
-                   "witness_fed_asset" : True,
+                   "witness_fed_asset" : False,
                    "committee_fed_asset" : False,
                    }
     permissions_int = 0
@@ -77,15 +70,15 @@ if __name__ == '__main__':
                "blacklist_authorities" : [],
                "whitelist_markets" : [],
                "blacklist_markets" : [],
-               "description" : "Feed: Last Trade Price - every 15 minutes"
+               "description" : ""
                }
     mpaoptions = {"feed_lifetime_sec" : 60 * 60 * 24 * 14,
-                  "minimum_feeds" : 5,
+                  "minimum_feeds" : 1,
                   "force_settlement_delay_sec" : 60 * 5,
-                  "force_settlement_offset_percent" :   0 * GRAPHENE_1_PERCENT,
+                  "force_settlement_offset_percent" :   1 * GRAPHENE_1_PERCENT,
                   "maximum_force_settlement_volume" : 100 * GRAPHENE_1_PERCENT,
                   "short_backing_asset" : asset["id"],
                   }
 
-    tx = graphene.rpc.create_asset(account["name"], symbol, precision, options, mpaoptions, True)
+    tx = rpc.create_asset(account["name"], symbol, precision, options, mpaoptions, True)
     print(json.dumps(tx, indent=4))

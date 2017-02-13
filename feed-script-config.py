@@ -10,16 +10,17 @@
 ##
 ################################################################################
 
-import feedsources
 import subprocess
 import os
-configPath = os.path.dirname(__file__)
+import feedsources
+core_symbol = "BTS"
+feedsources.core_symbol = core_symbol
 
 ################################################################################
 ## RPC-client connection information (required)
 ################################################################################
 host   = "localhost"     # machine that runs a cli-wallet with -H parameter
-port   = 8090            # RPC port, e.g.`-H 127.0.0.1:8092`
+port   = 8092            # RPC port, e.g.`-H 127.0.0.1:8092`
 user   = ""              # API user (optional)
 passwd = ""              # API user passphrase (optional)
 unlock = ""              # password to unlock the wallet if the cli-wallet is locked
@@ -52,13 +53,16 @@ producer_name                = "fakeusd-feed-producer"
 # A feed becomes invalid if it is older than 24h. Hence, it should be force
 # published once a day (e.g. every 12h) Note that the script should be run more
 # frequently and publishes only those prices that fit the publishing criteria
-maxAgeFeedInSeconds          = 12*60*60 # max age of 12h
-change_min                   = 0.5    # Percentage of price change to force an update
-change_max                   = 5.0    # Percentage of price change to cause a warning
+maxAgeFeedInSeconds          = 12 * 60 * 60  # max age of 12h
+change_min                   = 0.5       # Percentage of price change to force an update
+change_max                   = 5.0       # Percentage of price change to cause a warning
 
 ################################################################################
 ## Asset specific Settings
 ################################################################################
+_all_assets = ["SILVER", "GOLD", "CNY", "EUR", "USD"]
+_bases = ["CNY", "USD", "BTC", "EUR"]
+
 asset_config = {
                    "default" : { ## DEFAULT BEHAVIOR
                        #
@@ -152,11 +156,12 @@ blame = "latest"
 #blame = "1428190"
 
 ################################################################################
-## Git revision for storage in blame files
-## (do not touch this line)
+# Git revision for storage in blame files
+# (do not touch this line)
 ################################################################################
 try :
-    gittag = subprocess.check_output(["git","-C", configPath, "rev-parse", "HEAD"]).decode("ascii").strip("\n")
+    configPath = os.path.dirname(__file__)
+    gittag = subprocess.check_output(["git", "-C", configPath, "rev-parse", "HEAD"]).decode("ascii").strip("\n")
 except :
     pass
 
