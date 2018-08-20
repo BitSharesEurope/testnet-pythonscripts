@@ -1,4 +1,4 @@
-from grapheneapi import GrapheneClient
+from grapheneapi.grapheneapi import GrapheneAPI
 import json
 
 perm = {}
@@ -22,14 +22,14 @@ class Config():
     wallet_password       = ""
 
 if __name__ == '__main__':
-    graphene = GrapheneClient(Config)
+    rpc = GrapheneAPI("localhost", 8092)
 
     issuer = "xeroc"
     symbol = "PMS"
     backing = "1.3.0"
 
-    account = graphene.rpc.get_account(issuer)
-    asset = graphene.rpc.get_asset(backing)
+    account = rpc.get_account(issuer)
+    asset = rpc.get_asset(backing)
 
     permissions = {"charge_market_fee" : True,
                    "white_list" : True,
@@ -85,7 +85,7 @@ if __name__ == '__main__':
                   "short_backing_asset" : asset["id"],
                   }
 
-    op = graphene.rpc.get_prototype_operation("asset_create_operation")
+    op = rpc.get_prototype_operation("asset_create_operation")
     op[1]["issuer"] = account["id"]
     op[1]["symbol"] = symbol
     op[1]["precision"] = asset["precision"]

@@ -1,12 +1,6 @@
 from grapheneapi.grapheneapi import GrapheneAPI
 import json
 
-class Config():
-    wallet_host           = "localhost"
-    wallet_port           = 8090
-    wallet_user           = ""
-    wallet_password       = ""
-
 
 if __name__ == '__main__':
     rpc = GrapheneAPI("localhost", 8092)

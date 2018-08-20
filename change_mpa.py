@@ -1,4 +1,4 @@
-from grapheneapi import GrapheneClient
+from grapheneapi.grapheneapi import GrapheneAPI
 import json
 
 perm = {}
@@ -15,22 +15,15 @@ GRAPHENE_100_PERCENT = 10000
 GRAPHENE_1_PERCENT = GRAPHENE_100_PERCENT / 100
 
 
-class Config():
-    wallet_host           = "localhost"
-    wallet_port           = 8090
-    wallet_user           = ""
-    wallet_password       = ""
-
-
 if __name__ == '__main__':
-    graphene = GrapheneClient(Config)
+    rpc = GrapheneAPI("localhost", 8092)
 
     issuer = "faucet"
     symbol = "PEG.LAST" # LAST, RANDOM, PARITY
     backing = "1.3.0"
 
-    account = graphene.rpc.get_account(issuer)
-    asset = graphene.rpc.get_asset(symbol)
+    account = rpc.get_account(issuer)
+    asset = rpc.get_asset(symbol)
 
     permissions = {"charge_market_fee" : True,
                    "white_list" : True,
@@ -78,5 +71,5 @@ if __name__ == '__main__':
                "blacklist_markets" : [],
                "description" : "Feed: Last Trade Price - every 15 minutes"
                }
-    tx = graphene.rpc.update_asset(symbol, None, options, True)
+    tx = rpc.update_asset(symbol, None, options, True)
     print(json.dumps(tx, indent=4))
