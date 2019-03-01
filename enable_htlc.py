@@ -44,7 +44,7 @@ def main(rpchost, rpcport, expiration, broadcast, proposer):
     op[1]["new_parameters"]["extensions"] = {
         "updatable_htlc_options": {
             "max_preimage_size": 19200,
-            "htlc_max_timeout_secs": 60 * 60 * 24 * 28,
+            "max_timeout_secs": 60 * 60 * 24 * 28,
         }
     }
 
